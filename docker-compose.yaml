@@ -1,0 +1,67 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web
+    restart: unless-stopped
+    tty: true
+    working_dir: /app
+    environment:
+      APP_NAME: ${APP_NAME}
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
+      MARIADB_HOST: ${MARIADB_HOST}
+      MARIADB_PORT: ${MARIADB_PORT}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_ROOT_USER}
+      MARIADB_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    ports:
+    - "80:80"
+    volumes:
+      - ./profile_app:/app
+      - ./apache/web.conf:/etc/apache2/sites-available/000-default.conf
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - web_app
+
+  mariadb:
+    image: mariadb:11.5
+    container_name: mariadb
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - ./dbdata:/var/lib/mysql/
+      - ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - web_app
+
+  store:
+    build:
+      context: https://github.com/giedrius-slegeris/openweathermap-store.git
+      dockerfile: Dockerfile
+    container_name: store
+    tty: true
+    restart: unless-stopped
+    env_file:
+      - ./.env.store
+    networks:
+      - web_app
+
+networks:
+  web_app:
+    driver: bridge
