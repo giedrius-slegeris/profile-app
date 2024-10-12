@@ -68,7 +68,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "src/",
+            "Openweathermapstore\\": "vendor/giedrius-slegeris/proto-definitions-php/OpenWeatherMapStore/"
         }
     },
     "autoload-dev": {
