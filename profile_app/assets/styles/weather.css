@@ -1,0 +1,24 @@
+#loc-country {
+    font-size: 14pt;
+}
+#temperature {
+    font-size: 40pt;
+    display: inline-grid;
+}
+#current-description {
+    font-size: 10pt;
+}
+
+span.badge {
+    font-size: 12pt;
+    font-weight: initial;
+    width: initial;
+}
+
+#next-six-hours p {
+    margin-bottom: 0.5em;
+}
+
+#next-forecast img {
+    max-height: 30px;
+}

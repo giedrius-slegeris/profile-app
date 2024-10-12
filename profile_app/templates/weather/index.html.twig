@@ -1,7 +1,84 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="row">
-        <p>Weather data placeholder</p>
+    <div class="pt-5">
+        {% if error is defined %}
+            <p>{{ error }}</p>
+        {% endif %}
+
+        {% if data is defined %}
+            <h2>London, <span id="loc-country">The United Kingdom</span></h2>
+            <p>Last updated: {{ data.GetLastUpdated()|date("jS M Y H:i") }}</p>
+
+            {% set current, icon, description = data.GetCurrent(), '', '' %}
+            {% for weather in current.GetWeather()|slice(0, 1) %}
+                {% set icon, description = weather.GetIcon(), weather.GetDescription() %}
+            {% endfor %}
+
+            <p>
+                <img src="https://openweathermap.org/img/wn/{{ icon }}@4x.png" alt="weather icon" />
+                <span id="temperature">
+                    {% set temp = current.GetTemp() == current.GetTemp()|round ? current.GetTemp() : current.GetTemp()|number_format(1) %}
+                    {{ temp }}&deg;C<br />
+                    <span id="current-description">{{ description }}</span>
+                </span>
+            </p>
+
+            <span class="badge text-bg-secondary">
+                <i class="bi bi-moisture"></i>&ensp;{{ current.GetHumidity() }}&percnt;
+                &ensp;
+                {% set windSpeed = current.GetWindSpeed() == current.GetWindSpeed()|round ? current.GetWindSpeed() : current.GetWindSpeed()|number_format(1) %}
+                <i class="bi bi-wind"></i>&ensp;{{ windSpeed }} km/h
+                &ensp;
+                <i class="bi bi-sunrise"></i>&ensp;{{ current.GetSunrise()|date("H:i") }}
+                &ensp;
+                <i class="bi bi-sunset"></i>&ensp;{{ current.GetSunset()|date("H:i") }}
+            </span>
+
+            <h4 class="mt-5 mb-4">Weather Forecast for the Next 6 Hours</h4>
+            <div id="next-six-hours" class="row">
+                {% for hourly in data.GetHourly()|slice(1, 6) %}
+                    <div class="col-auto">
+                        <span class="badge text-bg-secondary">
+                            <p>{{ hourly.getDt()|date("H:i") }}</p>
+                            {% set temp = hourly.GetTemp() == hourly.GetTemp()|round ? hourly.GetTemp() : hourly.GetTemp()|number_format(1) %}
+                            <p><strong>{{ temp }}&deg;C</strong></p>
+
+                            {% set icon = '' %}
+                            {% for weather in hourly.GetWeather()|slice(0, 1) %}
+                                {% set icon = weather.GetIcon() %}
+                            {% endfor %}
+                            <img src="https://openweathermap.org/img/wn/{{ icon }}.png" alt="weather icon" />
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <h4 class="mt-5 mb-4">Next Forecast</h4>
+            <div id="next-forecast">
+                {% for daily in data.GetDaily()|slice(1, 8) %}
+                    {% set icon = '' %}
+                    {% for weather in daily.GetWeather()|slice(0, 1) %}
+                        {% set icon = weather.GetIcon() %}
+                    {% endfor %}
+
+                    {% set min = daily.getTemp().GetMin() == daily.getTemp().GetMin()|round ? daily.getTemp().GetMin() : daily.getTemp().GetMin()|number_format(1) %}
+                    {% set max = daily.getTemp().GetMax() == daily.getTemp().GetMax()|round ? daily.getTemp().GetMax() : daily.getTemp().GetMax()|number_format(1) %}
+
+                    <div class="row">
+                        <div class="col-md-2 col-lg-1">
+                            <p class="m-0 p-0">{{ daily.getDt()|date("l") }}</p>
+                        </div>
+                        <div class="col-md-2 col-lg-1">
+                            <p class="m-0 p-0 col-auto"><img src="https://openweathermap.org/img/wn/{{ icon }}.png" alt="weather icon" /></p>
+                        </div>
+                        <div class="col-md-8 col-lg-10">
+                            <p class="m-0 p-0 col-auto">{{ min }}&deg;C / {{ max }}&deg;C</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% endif %}
     </div>
 {% endblock %}
