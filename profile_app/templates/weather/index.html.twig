@@ -1,12 +1,16 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/weather.css') }}" />
+{% endblock %}
+
 {% block body %}
     <div class="pt-5">
         {% if error is defined %}
             <p>{{ error }}</p>
         {% endif %}
 
-        {% if data is defined %}
+        {% if data is empty == false %}
             <h2>London, <span id="loc-country">The United Kingdom</span></h2>
             <p>Last updated: {{ data.GetLastUpdated()|date("jS M Y H:i") }}</p>
 

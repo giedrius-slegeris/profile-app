@@ -1,4 +1,9 @@
+import $ from 'jquery';
 import './bootstrap.js';
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.min.css';
+
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -6,6 +11,5 @@ import './bootstrap.js';
  * which should already be in your base.html.twig.
  */
 import './styles/app.css';
-import './styles/weather.css';
 
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
