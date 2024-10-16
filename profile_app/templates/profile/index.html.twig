@@ -1,10 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="row pt-5">
-
+    <div id="profile-row" class="row">
         <div class="col-sm-12 col-md-8">
-            <h2 class="mb-4">Giedrius Slegeris,</h2>
+            <h2 id="profile-name" class="mb-4">Giedrius Slegeris,</h2>
             <p id="profile-description">
                 I'm a versatile software engineer with a passion for building scalable and efficient systems. With a strong
                 foundation in databases, PHP, and Golang. I specialize in designing and implementing microservice
@@ -14,7 +13,26 @@
             </p>
         </div>
 
+        {% set slideInterval, skillBadges = 2000, ['php', 'golang', 'docker', 'jquery', 'bootstrap', 'symfony', 'mysql', 'postgres', 'dynamodb'] %}
         <div class="col-sm-12 col-md-4">
+            <div id="profile-carousel" class="carousel slide mt-5" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% set firstBadge = true %}
+                    {% for badge in skillBadges %}
+                        <div class="carousel-item {% if firstBadge == true %}active{% endif %}" data-bs-interval="{{ slideInterval }}">
+                            {% set source = 'images/' ~ badge ~ '.png' %}
+                            <img src="{{ asset(source) }}" class="d-block" alt="php">
+                        </div>
+                        {% set firstBadge = false %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <a href="https://github.com/giedrius-slegeris" target="_blank"><img src="{{ asset('images/github.png') }}" alt="php" height="40"></a>
+            <a href="https://www.linkedin.com/in/giedrius-slegeris/" target="_blank"><img src="{{ asset('images/linkedin.png') }}" alt="php" height="40"></a>
         </div>
     </div>
 {% endblock %}
