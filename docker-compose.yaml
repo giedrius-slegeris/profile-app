@@ -39,10 +39,12 @@ services:
     environment:
       MARIADB_USER: ${MARIADB_USER}
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_USER: ${MARIADB_ROOT_USER}
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
     volumes:
       - ./dbdata:/var/lib/mysql/
-      - ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./mariadb/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       start_period: 10s
