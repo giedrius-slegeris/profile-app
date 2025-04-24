@@ -120,9 +120,6 @@
             <span class="badge text-bg-secondary">
                 <i class="bi bi-moisture"></i>&ensp;{{ current.GetHumidity() }}&percnt;
                 &ensp;
-                {% set windSpeed = current.GetWindSpeed() == current.GetWindSpeed()|round ? current.GetWindSpeed() : current.GetWindSpeed()|number_format(1) %}
-                <i class="bi bi-wind"></i>&ensp;{{ windSpeed }} km/h
-                &ensp;
                 <i class="bi bi-sunrise"></i>&ensp;{{ current.GetSunrise()|date("H:i") }}
                 &ensp;
                 <i class="bi bi-sunset"></i>&ensp;{{ current.GetSunset()|date("H:i") }}
