@@ -7,13 +7,101 @@
 
 {% block body %}
     <div class="pt-5">
+        <div>
+            <p id="how-this-works-link">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#how-this-works-modal">
+                    <i class="bi bi-gear"></i> How this works
+                </a>
+            </p>
+
+            <div id="how-this-works-modal" class="modal modal-lg fade" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">How this works</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>The diagram illustrates the architecture of a system designed to provide affordable access to
+                                weather data that would otherwise be available only through paid APIs.
+                                At the core of this architecture is a set of shared Protobuf (gRPC) API definitions that
+                                enable seamless communication between the PHP Symfony application and the Go
+                                service. These Protobuf files define the structure and communication contract used by both
+                                applications, promoting consistency and maintainability.</p>
+
+                            <div style="text-align: center;">
+                                <img src="{{ asset('images/weather-app-diagram.png') }}" alt="Weather app diagram" />
+                            </div>
+
+                            <br />
+                            <h4>System components and flow:</h4>
+                            <ol>
+                                <li>
+                                    Web Interface &amp; Users.<br />
+                                    End users interact with the system via a web
+                                    interface served by the PHP Symfony application.</li>
+                                <li>
+                                    PHP Symfony Application<br />
+                                    <ul>
+                                        <li>Handles user requests via the web interface.</li>
+                                        <li>Retrieves weather data from the Go service via gRPC, rather than directly
+                                            from the external Weather API.</li>
+                                        <li>Stores and manages local application data in a dedicated MariaDB database.</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    Go Service<br />
+                                    <ul>
+                                        <li>Acts as an abstraction and cache layer over external Weather API services.</li>
+                                        <li>Regularly refreshes and stores weather data in memory cache, reducing
+                                            direct hits to the paid Weather API.</li>
+                                        <li>Exposes a gRPC interface defined by the shared Protobuf APIs.</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    Caching Strategy<br />
+                                    The Go service ensures up-to-date weather data by periodically refreshing its cache.
+                                    This design helps:
+                                    <ul>
+                                        <li>Minimize costs by limiting the number of external API requests.</li>
+                                        <li>Increase reliability by ensuring that even if the external API is down, cached
+                                            data remains available to the PHP application.</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    Protobuf API Definitions<br />
+                                    <ul>
+                                        <li>Centrally defined and used by both the PHP and Go projects.</li>
+                                        <li>Ensure that both systems communicate over gRPC using a consistent data
+                                            contract.</li>
+                                    </ul>
+                                </li>
+                            </ol>
+
+                            <h4>Benefits of this design:</h4>
+                            <ul>
+                                <li>Cost Efficiency: Reduces the number of paid API requests by caching data
+                                    centrally.</li>
+                                <li>Scalability: Enables multiple front-end applications to reuse the same cached
+                                    weather data.</li>
+                                <li>Maintainability: Shared Protobuf files streamline communication logic across
+                                    services.</li>
+                                <li>Separation of Concerns: The Go service handles API interactions and caching,
+                                    while Symfony focuses on business logic and user interaction.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {% if error is defined %}
             <p>{{ error }}</p>
         {% endif %}
 
         {% if data is empty == false %}
             <h2>London, <span id="loc-country">The United Kingdom</span></h2>
-            <p>Last updated: {{ data.GetLastUpdated()|date("jS M Y H:i") }}</p>
+            <p>Last updated: {{ data.GetLastUpdated()|date("jS M Y H:i") }} (UTC)</p>
 
             {% set current, icon, description = data.GetCurrent(), '', '' %}
             {% for weather in current.GetWeather()|slice(0, 1) %}
@@ -21,7 +109,7 @@
             {% endfor %}
 
             <p>
-                <img src="https://openweathermap.org/img/wn/{{ icon }}@4x.png" alt="weather icon" />
+                <img id="weather-image-current" src="https://openweathermap.org/img/wn/{{ icon }}@4x.png" alt="weather icon" />
                 <span id="temperature">
                     {% set temp = current.GetTemp() == current.GetTemp()|round ? current.GetTemp() : current.GetTemp()|number_format(1) %}
                     {{ temp }}&deg;C<br />

@@ -1,3 +1,11 @@
+/* How this works section */
+#how-this-works-link {
+    margin-bottom: 1em;
+}
+#how-this-works-link a {
+    text-decoration: none;
+}
+
 #loc-country {
     font-size: 14pt;
 }
@@ -19,6 +27,10 @@ span.badge {
     margin-bottom: 0.5em;
 }
 
+/* images section */
+#weather-image-current {
+    max-height: 160px;
+}
 #next-forecast img {
     max-height: 30px;
 }
