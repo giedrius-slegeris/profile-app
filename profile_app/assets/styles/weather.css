@@ -23,7 +23,8 @@ span.badge {
     width: initial;
 }
 
-#next-six-hours p {
+#next-six-hours span > span {
+    display: inline-block;
     margin-bottom: 0.5em;
 }
 
